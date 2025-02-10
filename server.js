@@ -50,7 +50,7 @@ app.post('/auth', (req, res) => {
                     return res.status(500).json({ success: false, message: 'Error hashing password', error: err.message });
                 }
                 
-                db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, hash], (err) => {
+                db.run('INSERT INTO auth (username, password) VALUES (?, ?)', [username, hash], (err) => {
                     if (err) {
                         console.error('❌ Error creating auth:', err.message);
                         return res.status(500).json({ success: false, message: 'Error creating auth', error: err.message });
