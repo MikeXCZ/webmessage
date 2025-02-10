@@ -33,7 +33,7 @@
             const messageInput = document.getElementById('message-input');
             const message = messageInput.value.trim();
             if (message) {
-                ws.send(message);
+                ws.send(JSON.stringify({ message }));
                 messageInput.value = '';
             }
         });
