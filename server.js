@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const port = 3000;
 
 const app = express();
-const wss = new WebSocket.Server({ port: '3000' });
+const wss = new WebSocket.Server({ port: '4000' });
 
 // Middleware to parse cookies
 app.use(cookieParser());
