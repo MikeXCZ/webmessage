@@ -20,8 +20,12 @@
   "homepage": "https://github.com/MikeXCZ/webmessage#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
     "nodemon": "^3.1.9",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.5",
+    "ws": "^8.18.0"
   }
 }
