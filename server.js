@@ -12,7 +12,7 @@ app.use(express.json());
 const { readFile } = require('fs').promises;
 
 // Connect to SQLite database
-const db = new sqlite3.Database('mydatabase.db', (err) => {
+const db = new sqlite3.Database('database.db', (err) => {
     if (err) {
         console.error('Error connecting to database:', err.message);
     } else {
@@ -26,8 +26,6 @@ app.get('/', async (req, res) => {
 
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
-    console.log(req.body);
-    console.log(username, password);
     
     db.get('SELECT * FROM auth WHERE username = ?', [username], (err, auth) => {
         if (err) {
