@@ -24,6 +24,10 @@ app.get('/', async (req, res) => {
     res.send( await readFile('./src/index.html','utf8'));
 });
 
+app.get('/chat', async (req, res) => {
+    res.send( await readFile('./src/chat.html','utf8'));
+});
+
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     
