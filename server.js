@@ -29,7 +29,8 @@ app.post('/auth', (req, res) => {
     
     db.get('SELECT * FROM auth WHERE username = ?', [username], (err, auth) => {
         if (err) {
-            return res.json({ success: false, message: 'Database error' });
+            console.error('❌ Database Error (SELECT):', err.message);
+            return res.status(500).json({ success: false, message: 'Database error', error: err.message });
         }
         
         if (auth) {
@@ -45,12 +46,14 @@ app.post('/auth', (req, res) => {
             // User does not exist, create new auth
             bcrypt.hash(password, 10, (err, hash) => {
                 if (err) {
-                    return res.json({ success: false, message: 'Error hashing password' });
+                    console.error('❌ Error hashing password:', err.message);
+                    return res.status(500).json({ success: false, message: 'Error hashing password', error: err.message });
                 }
                 
                 db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, hash], (err) => {
                     if (err) {
-                        return res.json({ success: false, message: 'Error creating auth' });
+                        console.error('❌ Error creating auth:', err.message);
+                        return res.status(500).json({ success: false, message: 'Error creating auth', error: err.message });
                     }
                     res.json({ success: true, message: 'User registered successfully' });
                 });
