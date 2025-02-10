@@ -74,7 +74,7 @@ app.post('/auth', (req, res) => {
                         error: err.message });
                 }
                 
-                db.run('INSERT INTO auth (username, password) VALUES (?, ?)', [username, hash], (err) => {
+                db.post('INSERT INTO auth (username, password) VALUES (?, ?)', [username, hash], (err) => {
                     if (err) {
                         console.error('❌ Error creating auth:', err.message);
                         return res.status(500).json({ 

@@ -33,13 +33,8 @@
             const messageInput = document.getElementById('message-input');
             const message = messageInput.value.trim();
             if (message) {
-                const chatBox = document.getElementById('chat-box');
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.textContent = message;
-                chatBox.appendChild(messageElement);
+                ws.send(message);
                 messageInput.value = '';
-                chatBox.scrollTop = chatBox.scrollHeight;
             }
         });
 
