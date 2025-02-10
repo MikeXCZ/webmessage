@@ -154,7 +154,12 @@ wss.on('connection', (ws, req) => {
         return acc;
     }, {});
     const sessionId = cookies.sessionId;
-
+    if (!sessionId) {
+        console.error('❌ No session ID:', cookies);
+        ws.close();
+        return
+    }
+    
     //check if session is valid
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
         if (err || !session) {
