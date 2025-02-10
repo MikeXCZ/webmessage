@@ -2,7 +2,7 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const http = require('http');
-const { type } = require('os');
+const WebSocket = require('ws');
 
 const port = 3000;
 
