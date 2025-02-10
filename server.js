@@ -155,6 +155,7 @@ wss.on('connection', (ws, req) => {
     }, {});
     const sessionId = cookies.sessionId;
 
+    //check if session is valid
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
         if (err || !session) {
             console.error('❌ Invalid session:', err ? err.message : 'Session not found');
@@ -178,9 +179,10 @@ wss.on('connection', (ws, req) => {
             }
         });
 
-        ws.on('message', (message) => {
-            const parsedMessage = JSON.parse(message);
-            const { message: content } = parsedMessage;
+        // Handle incoming messages
+        ws.on('message', (data) => {
+            const parsedData = JSON.parse(data);
+            const { message: content} = parsedData;
 
             // Store the message
             db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username], (err) => {
