@@ -23,4 +23,39 @@ app.get('/', async (req, res) => {
     res.send( await readFile('./src/index.html','utf8'));
 });
 
+app.post('/auth', (req, res) => {
+    const { username, password } = req.body;
+    
+    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+        if (err) {
+            return res.json({ success: false, message: 'Database error' });
+        }
+        
+        if (user) {
+            // User exists, check password
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (result) {
+                    res.json({ success: true, message: 'Login successful' });
+                } else {
+                    res.json({ success: false, message: 'Incorrect password' });
+                }
+            });
+        } else {
+            // User does not exist, create new user
+            bcrypt.hash(password, 10, (err, hash) => {
+                if (err) {
+                    return res.json({ success: false, message: 'Error hashing password' });
+                }
+                
+                db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, hash], (err) => {
+                    if (err) {
+                        return res.json({ success: false, message: 'Error creating user' });
+                    }
+                    res.json({ success: true, message: 'User registered successfully' });
+                });
+            });
+        }
+    });
+});
+
 app.listen(process.env.PORT || port, () => console.log('App listening on port ${port}'));
