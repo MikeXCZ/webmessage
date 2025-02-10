@@ -96,14 +96,9 @@ app.post('/auth', (req, res) => {
 // WebSocket connection
 wss.on('connection', (ws) => {
     // Send all previous messages to the newly connected client
-    db.get('SELECT * FROM messages', (err, rows) => {
+    db.all('SELECT * FROM messages', (err, rows) => {
         if (err) {
             console.error('❌ failed to load history:', err.message);
-            return res.status(500).json({ 
-                success: false, 
-                message: 'failed to load history', 
-                type: "history",
-                error: err.message });
         } else {
             ws.send(JSON.stringify({
                 sucess: true, 
@@ -115,14 +110,9 @@ wss.on('connection', (ws) => {
 
     ws.on('message', (message) => {
         // Store the message
-        db.post('INSERT INTO messages (content) VALUES (?)', [message], (err) => {
+        db.run('INSERT INTO messages (content) VALUES (?)', [message], (err) => {
             if (err) {
                 console.error('❌ failed to upload history:', err.message);
-                return res.status(500).json({ 
-                    success: false, 
-                    message: 'failed to upload history', 
-                    type: "message",
-                    error: err.message });
             } else {
                 // Broadcast the message to all clients
                 wss.clients.forEach((client) => {
