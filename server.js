@@ -181,8 +181,14 @@ wss.on('connection', (ws, req) => {
 
         // Handle incoming messages
         ws.on('message', (data) => {
-            const parsedData = JSON.parse(data);
-            const { message: content} = parsedData;
+            let parsedData;
+            try {
+                parsedData = JSON.parse(data);
+            } catch (e) {
+                console.error('❌ Invalid JSON:', e.message);
+                return;
+            }
+            const { message: content } = parsedData;
 
             // Store the message
             db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username], (err) => {
