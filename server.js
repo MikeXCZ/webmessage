@@ -26,6 +26,8 @@ app.get('/', async (req, res) => {
 
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
+    console.log(req.body);
+    console.log(username, password);
     
     db.get('SELECT * FROM auth WHERE username = ?', [username], (err, auth) => {
         if (err) {
