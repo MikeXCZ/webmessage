@@ -26,14 +26,14 @@ app.get('/', async (req, res) => {
 app.post('/auth', (req, res) => {
     const { username, password } = req.body;
     
-    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+    db.get('SELECT * FROM auth WHERE username = ?', [username], (err, auth) => {
         if (err) {
             return res.json({ success: false, message: 'Database error' });
         }
         
-        if (user) {
+        if (auth) {
             // User exists, check password
-            bcrypt.compare(password, user.password, (err, result) => {
+            bcrypt.compare(password, auth.password, (err, result) => {
                 if (result) {
                     res.json({ success: true, message: 'Login successful' });
                 } else {
@@ -41,7 +41,7 @@ app.post('/auth', (req, res) => {
                 }
             });
         } else {
-            // User does not exist, create new user
+            // User does not exist, create new auth
             bcrypt.hash(password, 10, (err, hash) => {
                 if (err) {
                     return res.json({ success: false, message: 'Error hashing password' });
@@ -49,7 +49,7 @@ app.post('/auth', (req, res) => {
                 
                 db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, hash], (err) => {
                     if (err) {
-                        return res.json({ success: false, message: 'Error creating user' });
+                        return res.json({ success: false, message: 'Error creating auth' });
                     }
                     res.json({ success: true, message: 'User registered successfully' });
                 });
