@@ -165,7 +165,7 @@ wss.on('connection', (ws, req) => {
         const username = session.username;
 
         // Send all previous messages to the newly connected client
-        db.all('SELECT * FROM messages', (err, rows) => {
+        db.all('SELECT * FROM chat', (err, rows) => {
             if (err) {
                 console.error('❌ failed to load history:', err.message);
             } else {
@@ -183,7 +183,7 @@ wss.on('connection', (ws, req) => {
             const { message: content } = parsedMessage;
 
             // Store the message
-            db.run('INSERT INTO messages (content, username) VALUES (?, ?)', [content, username], (err) => {
+            db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username], (err) => {
                 if (err) {
                     console.error('❌ failed to upload message:', err.message);
                 } else {
