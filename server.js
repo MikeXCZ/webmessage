@@ -1,7 +1,6 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
-const http = require('http');
 const WebSocket = require('ws');
 const cookieParser = require('cookie-parser');
 const { v4: uuidv4 } = require('uuid');
@@ -9,8 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const port = 3000;
 
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ port: '3000' });
 
 // Middleware to parse cookies
 app.use(cookieParser());
