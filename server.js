@@ -1,10 +1,14 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
+const http = require('http');
+const { type } = require('os');
 
 const port = 3000;
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -33,17 +37,29 @@ app.post('/auth', (req, res) => {
     
     db.get('SELECT * FROM auth WHERE username = ?', [username], (err, auth) => {
         if (err) {
-            console.error('❌ Database Error (SELECT):', err.message);
-            return res.status(500).json({ success: false, message: 'Database error', error: err.message });
+            console.error('❌ Database Error:', err.message);
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Database error', 
+                type: 'check register/login',
+                error: err.message });
         }
         
         if (auth) {
             // User exists, check password
             bcrypt.compare(password, auth.password, (err, result) => {
                 if (result) {
-                    res.json({ success: true, message: 'Login successful' });
+                    return res.json({ 
+                        success: true, 
+                        message: 'Login successful',
+                        type: 'login' });
                 } else {
-                    res.json({ success: false, message: 'Incorrect password' });
+                    console.error('❌ Incorrect password:', err.message);
+                    return res.json({ 
+                        success: false, 
+                        message: 'Incorrect password',
+                        type: 'login',
+                        error: err.message });
                 }
             });
         } else {
@@ -51,18 +67,75 @@ app.post('/auth', (req, res) => {
             bcrypt.hash(password, 10, (err, hash) => {
                 if (err) {
                     console.error('❌ Error hashing password:', err.message);
-                    return res.status(500).json({ success: false, message: 'Error hashing password', error: err.message });
+                    return res.status(500).json({ 
+                        success: false, 
+                        message: 'Error hashing password', 
+                        type: 'hashing',
+                        error: err.message });
                 }
                 
                 db.run('INSERT INTO auth (username, password) VALUES (?, ?)', [username, hash], (err) => {
                     if (err) {
                         console.error('❌ Error creating auth:', err.message);
-                        return res.status(500).json({ success: false, message: 'Error creating auth', error: err.message });
+                        return res.status(500).json({ 
+                            success: false, 
+                            message: 'Error creating auth', 
+                            type: 'register',
+                            error: err.message });
                     }
-                    res.json({ success: true, message: 'User registered successfully' });
+                    return res.json({ 
+                        success: true, 
+                        message: 'User registered successfully',
+                        type: 'register' });
                 });
             });
         }
+    });
+});
+
+// WebSocket connection
+wss.on('connection', (ws) => {
+    // Send all previous messages to the newly connected client
+    db.get('SELECT * FROM messages', (err, rows) => {
+        if (err) {
+            console.error('❌ failed to load history:', err.message);
+            return res.status(500).json({ 
+                success: false, 
+                message: 'failed to load history', 
+                type: "history",
+                error: err.message });
+        } else {
+            ws.send(JSON.stringify({
+                sucess: true, 
+                message:"sucessfully loaded history", 
+                type: 'history', 
+                data: rows }));
+        }
+    });
+
+    ws.on('message', (message) => {
+        // Store the message
+        db.post('INSERT INTO messages (content) VALUES (?)', [message], (err) => {
+            if (err) {
+                console.error('❌ failed to upload history:', err.message);
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'failed to upload history', 
+                    type: "message",
+                    error: err.message });
+            } else {
+                // Broadcast the message to all clients
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ 
+                            sucess: "true",
+                            message: "sucessfully uploaded message",
+                            type: 'message', 
+                            data: message }));
+                    }
+                });
+            }
+        });
     });
 });
 
