@@ -21,12 +21,13 @@
         const ws = new WebSocket('ws://192.168.1.198:4000');
 
         ws.onmessage = function(event) {
-            console.log(event);
             const message = JSON.parse(event.data);
-            console.log(message);
             switch (message.type) {
                 case 'histoy':
-                    message.data.forEach(data => addMessageToChatBox(data.content));
+                    message.data.forEach(data => (
+                        addMessageToChatBox(data.content),
+                        console.log(data.content)
+                    ));
                     break;
                 case 'message':
                     addMessageToChatBox(message.data.content);
