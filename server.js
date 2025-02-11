@@ -154,6 +154,7 @@ wss.on('connection', (ws, req) => {
         ws.close();
         return;
     }
+
     const cookies = req.headers.cookie.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.trim().split('=');
         acc[key] = value;
@@ -187,13 +188,7 @@ wss.on('connection', (ws, req) => {
 
         // Handle incoming messages
         ws.on('message', (data) => {
-            let parsedData;
-            try {
-                parsedData = JSON.parse(data);
-            } catch (e) {
-                console.error('❌ Invalid JSON:', e.message);
-                return;
-            }
+            parsedData = JSON.parse(data);
             const { data: content } = parsedData;
 
             // Store the message

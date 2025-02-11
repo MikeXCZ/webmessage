@@ -21,11 +21,14 @@
         const ws = new WebSocket('ws://192.168.1.198:4000');
 
         ws.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data.type === 'history') {
-                data.data.forEach(message => addMessageToChatBox(message.content));
-            } else if (data.type === 'message') {
-                addMessageToChatBox(data.data);
+            const parsedEvent = JSON.parse(event);
+            switch (parsedEvent.type) {
+                case 'histoy':
+                    parsedEvent.data.forEach(data => addMessageToChatBox(data.content));
+                    break;
+                case 'message':
+                    addMessageToChatBox(parsedEvent.data.content);
+                    break;
             }
         };
 
@@ -33,7 +36,7 @@
             const messageInput = document.getElementById('message-input');
             const message = messageInput.value.trim();
             if (message) {
-                ws.send(JSON.stringify({ message: message }));
+                ws.send(JSON.stringify({ data: message }));
                 messageInput.value = '';
             }
         });
