@@ -148,18 +148,19 @@ app.post('/auth', (req, res) => {
 
 // WebSocket connection
 wss.on('connection', (ws, req) => {
+    //check if user has a valid session
+    if(!req.headers.cookie) {
+        console.error('❌ Invalid session:', err ? err.message : 'Session not found');
+            ws.close();
+            return;
+    }
     const cookies = req.headers.cookie.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.trim().split('=');
         acc[key] = value;
         return acc;
     }, {});
     const sessionId = cookies.sessionId;
-    if (!sessionId) {
-        console.error('❌ No session ID:', cookies);
-        ws.close();
-        return
-    }
-    
+
     //check if session is valid
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
         if (err || !session) {
