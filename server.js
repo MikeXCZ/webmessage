@@ -150,9 +150,9 @@ app.post('/auth', (req, res) => {
 wss.on('connection', (ws, req) => {
     //check if user has a valid session
     if(!req.headers.cookie) {
-        console.error('❌ Invalid session:', err ? err.message : 'Session not found');
-            ws.close();
-            return;
+        console.error('❌ Invalid session');
+        ws.close();
+        return;
     }
     const cookies = req.headers.cookie.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.trim().split('=');
