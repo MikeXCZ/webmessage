@@ -4,12 +4,15 @@ const bcrypt = require('bcrypt');
 const WebSocket = require('ws');
 const cookieParser = require('cookie-parser');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 const port = 3000;
 
 const app = express();
 const wss = new WebSocket.Server({ port: '4000' });
 
+// Midlleware to server static files (css, js, images)
+app.use(express.static(path.join(__dirname, 'src')));
 // Middleware to parse cookies
 app.use(cookieParser());
 // Middleware to parse JSON
