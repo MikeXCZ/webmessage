@@ -181,7 +181,7 @@ wss.on('connection', (ws, req) => {
                     success: true, 
                     message: "successfully loaded history", 
                     type: 'history', 
-                    data: rows 
+                    data: rows.map(row => ({ content: row.content, username: row.username }))
                 }));
             }
         });

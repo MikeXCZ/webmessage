@@ -21,6 +21,7 @@
         const ws = new WebSocket('ws://192.168.1.198:4000');
 
         ws.onmessage = function(event) {
+            console.log(event);
             const parsedEvent = JSON.parse(event);
             switch (parsedEvent.type) {
                 case 'histoy':
