@@ -23,13 +23,10 @@
         ws.onmessage = function(event) {
             const message = JSON.parse(event.data);
             switch (message.type) {
-                case 'histoy':
-                    message.data.forEach(data => (
-                        addMessageToChatBox(data.content),
-                        console.log(data.content)
-                    ));
+                case "history":
+                    message.data.forEach(data => (addMessageToChatBox(data.content)));
                     break;
-                case 'message':
+                case "message":
                     addMessageToChatBox(message.data.content);
                     break;
             }
