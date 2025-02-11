@@ -24,10 +24,10 @@
             const message = JSON.parse(event.data);
             switch (message.type) {
                 case "history":
-                    message.data.forEach(data => (addMessageToChatBox(data.content)));
+                    message.data.forEach(data => (addMessageToChatBox(data.username, data.content)));
                     break;
                 case "message":
-                    addMessageToChatBox(message.data.content);
+                    addMessageToChatBox(message.data.username, message.data.content);
                     break;
             }
         };
@@ -47,11 +47,11 @@
             }
         });
 
-        function addMessageToChatBox(message) {
+        function addMessageToChatBox(username,message) {
             const chatBox = document.getElementById('chat-box');
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
-            messageElement.textContent = message;
+            messageElement.textContent = '<strong>${username}:</strong> ${message}';
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
