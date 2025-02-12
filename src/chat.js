@@ -30,7 +30,7 @@ document.getElementById('message-input').addEventListener('keypress', function(e
 function addMessageToChatBox(username,message) {
     const chatBox = document.getElementById('message-box');
     const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
+    messageElement.classList.add('chat-message');
     messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;

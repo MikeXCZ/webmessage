@@ -21,7 +21,7 @@ body {
     z-index: 1;
 }
 .chat-container {
-    background-color: #4A555C;
+    background-color: #677680;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -34,6 +34,15 @@ body {
     margin-bottom: 10px;
     margin-left: auto;
     margin-right: auto;
+}
+.chat-message{
+    background-color: #AEC7D6;
+    padding: 0px 5px;
+    color: #362E22;
+    padding: 3px;
+    margin: 4px;
+    border-radius: 5px;
+    max-width: 90%;
 }
 .message-box {
     background-color: #677680;
