@@ -38,18 +38,18 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
-#message{
+.message{
     margin: 4px;
     display: flex;
     gap: 4px;
 }
-#chat{
+.chat{
     background-color: #DAE9F2;
     padding: 3px;
     color: #362E22;
     border-radius: 5px;
 }
-#date {
+.date {
     background-color: #DAE9F2;
     padding: 3px;
     color: #362E22;

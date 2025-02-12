@@ -33,9 +33,9 @@ function addMessageToChatBox(username,message,date) {
     const messageElement = document.createElement('div');
     const chatElement = document.createElement('div');
     const dateElement = document.createElement('div');
-    chatElement.id.add('chat');
-    dateElement.id.add('date');
-    messageElement.id.add('message');
+    chatElement.classList.add('chat');
+    dateElement.classList.add('date');
+    messageElement.classList.add('message');
     chatElement.innerHTML = `<strong>${username} </strong> ${message}`;
     date = formatUnixTimestamp(date);
     dateElement.innerHTML = `${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}:${date.second}`;
