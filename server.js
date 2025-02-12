@@ -52,7 +52,7 @@ const db = new sqlite3.Database('database.db', (err) => {
 app.get('/', async (req, res) => {
     try {
         const username = await checkSession(req);
-        res.cookie('sessionUsername', username, { httpOnly: false });
+        res.cookie('sessionUsername', username, { httpOnly: true, secure: true, sameSite: 'Strict' });
         res.send(await readFile('./src/chat.html', 'utf8'));
     } catch (err) {
         return res.redirect('/auth');
@@ -182,16 +182,15 @@ wss.on('connection', (ws, req) => {
 
     // Handle incoming messages
     ws.on('message', (data) => {
-        parsedData = JSON.parse(data);
+        const parsedData = JSON.parse(data);
         const { data: content} = parsedData;
         const unixTimestamp = Math.floor(Date.now() / 1000);
         // Store the message
-        db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username, unixTimestamp], (err) => {
+        db.run('INSERT INTO chat (content, username, timestamp) VALUES (?, ?, ?)', [content, username, unixTimestamp], (err) => {
             if (err) {
                 console.error('❌ failed to upload message:', err.message);
             }
         });
-        db.run('SELECT * FR')
         // Broadcast the message to all clients
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
@@ -206,4 +205,4 @@ wss.on('connection', (ws, req) => {
     });
 });
 
-app.listen(process.env.PORT || port, () => console.log('App listening on port ${port}'));
+app.listen(process.env.PORT || port, () => console.log(`192.168.1.198:${port}`));
