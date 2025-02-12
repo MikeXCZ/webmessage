@@ -21,26 +21,24 @@ app.use(express.json());
 const { readFile } = require('fs').promises;
 
 function checkSession(req, res) {
-    let sessionId;
-
-    // Check if it's an HTTP request with cookies
-    if (req.cookies && req.cookies.sessionId) {
-        sessionId = req.cookies.sessionId;
+    function checkSession(req) {
+        return new Promise((resolve, reject) => {
+            let sessionId = req.cookies?.sessionId;
+    
+            if (!sessionId) {
+                return reject({ redirect: true });
+            }
+    
+            db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
+                if (err || !session) {
+                    console.error('❌ Invalid session:', err ? err.message : 'Session not found');
+                    return reject({ redirect: true });
+                }
+    
+                resolve(session.username); // Resolve with the username
+            });
+        });
     }
-
-    // If no sessionId is found, redirect or close the WebSocket
-    if (!sessionId) {
-        return res.redirect('/auth'); // HTTP request
-    }
-
-    // Check session in the database
-    db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
-        if (err || !session) {
-            console.error('❌ Invalid session:', err ? err.message : 'Session not found');
-            return res.redirect('/auth'); // HTTP request
-        }
-        res.cookie('sessionUsername', session.username, { httpOnly: false });
-    });
 }
 
 // Connect to SQLite database
@@ -154,7 +152,7 @@ app.post('/auth', (req, res) => {
 
 // WebSocket connection
 wss.on('connection', (ws, req) => {
-    
+
     //get username from cookie
     let username = null;
     if (req.headers.cookie) {
