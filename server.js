@@ -52,7 +52,7 @@ const db = new sqlite3.Database('database.db', (err) => {
 app.get('/', async (req, res) => {
     try {
         const username = await checkSession(req);
-        res.cookie('sessionUsername', username, { httpOnly: true, secure: true, sameSite: 'Strict' });
+        res.cookie('sessionUsername', username, { httpOnly: false });
         res.send(await readFile('./src/chat.html', 'utf8'));
     } catch (err) {
         return res.redirect('/auth');
