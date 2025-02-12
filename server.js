@@ -166,53 +166,42 @@ wss.on('connection', (ws, req) => {
         }
     }
 
-    //check if session is valid
-    db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
-        if (err || !session) {
-            console.error('❌ Invalid session:', err ? err.message : 'Session not found');
-            ws.close();
-            return;
+    // Send all previous messages to the newly connected client
+    db.all('SELECT * FROM chat', (err, rows) => {
+        if (err) {
+            console.error('❌ failed to load history:', err.message);
+        } else {
+            ws.send(JSON.stringify({
+                success: true, 
+                message: "successfully loaded history", 
+                type: 'history', 
+                data: rows.map(row => ({ content: row.content, username: row.username }))
+            }));
         }
+    });
 
-        const username = session.username;
+    // Handle incoming messages
+    ws.on('message', (data) => {
+        parsedData = JSON.parse(data);
+        const { data: content } = parsedData;
 
-        // Send all previous messages to the newly connected client
-        db.all('SELECT * FROM chat', (err, rows) => {
+        // Store the message
+        db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username], (err) => {
             if (err) {
-                console.error('❌ failed to load history:', err.message);
+                console.error('❌ failed to upload message:', err.message);
             } else {
-                ws.send(JSON.stringify({
-                    success: true, 
-                    message: "successfully loaded history", 
-                    type: 'history', 
-                    data: rows.map(row => ({ content: row.content, username: row.username }))
-                }));
+                // Broadcast the message to all clients
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ 
+                            success: true,
+                            message: "successfully uploaded message",
+                            type: 'message', 
+                            data: { content, username } 
+                        }));
+                    }
+                });
             }
-        });
-
-        // Handle incoming messages
-        ws.on('message', (data) => {
-            parsedData = JSON.parse(data);
-            const { data: content } = parsedData;
-
-            // Store the message
-            db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username], (err) => {
-                if (err) {
-                    console.error('❌ failed to upload message:', err.message);
-                } else {
-                    // Broadcast the message to all clients
-                    wss.clients.forEach((client) => {
-                        if (client.readyState === WebSocket.OPEN) {
-                            client.send(JSON.stringify({ 
-                                success: true,
-                                message: "successfully uploaded message",
-                                type: 'message', 
-                                data: { content, username } 
-                            }));
-                        }
-                    });
-                }
-            });
         });
     });
 });
