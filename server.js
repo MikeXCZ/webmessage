@@ -175,7 +175,7 @@ wss.on('connection', (ws, req) => {
                 success: true, 
                 message: "successfully loaded history", 
                 type: 'history', 
-                data: rows.map(row => ({ content: row.content, username: row.username, UnixTimestamp: row.timestamp}))
+                data: rows.map(row => ({ content: row.content, username: row.username, unixTimestamp: row.timestamp}))
             }));
         }
     });

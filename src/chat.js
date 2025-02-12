@@ -2,7 +2,6 @@ const ws = new WebSocket('ws://192.168.1.198:4000/');
 
 ws.onmessage = function(event) {
     const message = JSON.parse(event.data);
-    console.log(message);
     switch (message.type) {
         case "history":
             message.data.forEach(data => (addMessageToChatBox(data.username, data.content, data.unixTimestamp)));
