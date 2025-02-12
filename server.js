@@ -21,24 +21,22 @@ app.use(express.json());
 const { readFile } = require('fs').promises;
 
 function checkSession(req, res) {
-    function checkSession(req) {
-        return new Promise((resolve, reject) => {
-            let sessionId = req.cookies?.sessionId;
-    
-            if (!sessionId) {
+    return new Promise((resolve, reject) => {
+        let sessionId = req.cookies.sessionId;
+
+        if (!sessionId) {
+            return reject({ redirect: true });
+        }
+        
+        db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
+            if (err || !session) {
+                console.error('❌ Invalid session:', err ? err.message : 'Session not found');
                 return reject({ redirect: true });
             }
-    
-            db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
-                if (err || !session) {
-                    console.error('❌ Invalid session:', err ? err.message : 'Session not found');
-                    return reject({ redirect: true });
-                }
-    
-                resolve(session.username); // Resolve with the username
-            });
+
+            resolve(session.username); // Resolve with the username
         });
-    }
+    });
 }
 
 // Connect to SQLite database
