@@ -27,11 +27,18 @@ document.getElementById('message-input').addEventListener('keypress', function(e
     }
 });
 
-function addMessageToChatBox(username,message) {
+function addMessageToChatBox(username,message,date) {
     const chatBox = document.getElementById('message-box');
     const messageElement = document.createElement('div');
-    messageElement.classList.add('chat-message');
-    messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
+    const chatElement = document.createElement('div');
+    const dateElement = document.createElement('div');
+    chatElement.id.add('chat');
+    dateElement.id.add('date');
+    messageElement.id.add('message');
+    chatElement.innerHTML = `<strong>${username} </strong> ${message}`;
+    dateElement.innerHTML = `${date}`;
+    messageElement.appendChild(chatElement);
+    messageElement.appendChild(dateElement);
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
 }

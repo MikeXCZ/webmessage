@@ -9,13 +9,16 @@ body {
     font-family: Arial, sans-serif;
     background-color: #362E22;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .login-icon {
     position: absolute;
     top: 10px;
     left: 10px;
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 100%;
     cursor: pointer;
     z-index: 1;
@@ -26,7 +29,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 20px);
+    height: 90vh;
     width: 50vw;
     min-width: 300px;
     border-radius: 10px;
@@ -35,14 +38,24 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
-.chat-message{
-    background-color: #AEC7D6;
-    padding: 0px 5px;
-    color: #362E22;
-    padding: 3px;
+#message{
     margin: 4px;
+    display: flex;
+    gap: 4px;
+}
+#chat{
+    background-color: #DAE9F2;
+    padding: 3px;
+    color: #362E22;
     border-radius: 5px;
-    max-width: 90%;
+}
+#date {
+    background-color: #DAE9F2;
+    padding: 3px;
+    color: #362E22;
+    border-radius: 5px;
+    font-size: 5px;
+    width: 20px;
 }
 .message-box {
     background-color: #677680;
@@ -100,7 +113,8 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    width: 40vw;
+    width: 35vw;
+    min-width: 2px;
     margin: auto;
     border-radius: 10px;
 }
