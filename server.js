@@ -52,12 +52,12 @@ const db = new sqlite3.Database('database.db', (err) => {
 
 // deliver html for index page
 app.get('/', async (req, res) => {
-    res.send( await readFile('./src/index.html','utf8'));
+    res.send( await readFile('./src/chat.html','utf8'));
 });
 
 // deliver html for chat page
-app.get('/chat', async (req, res) => {
-    res.send( await readFile('./src/chat.html','utf8'));
+app.get('/auth', async (req, res) => {
+    res.send( await readFile('./src/auth.html','utf8'));
 });
 
 // manage login and register

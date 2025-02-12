@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <base href="http://192.168.1.198:3000/">
+    <title>Authentication</title>
+</head>
+<body id="auth-body">
+    <div class="main-container">
+        <h2 class="text" id="auth-label">Authentication</h2>
+        <div id = "prompt-container">
+            <input type="text" class="text-prompt" id="username" placeholder="Username" required>
+            <input type="password" class="text-prompt" id="password" placeholder="Password" required>
+            <p id="message"></p>
+        </div>
+        <button class="send-button" id="auth-send">Send</button>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
