@@ -20,26 +20,26 @@ app.use(express.json());
 //readfiles easier instead of writing fs.promises.readFile(...)
 const { readFile } = require('fs').promises;
 
-function checkSession(req) {
-    if (!req.cookies.sessionId) {
-        window.location.href = '/auth';
-        return
+function checkSession(req, res) {
+    let sessionId;
+
+    // Check if it's an HTTP request with cookies
+    if (req.cookies && req.cookies.sessionId) {
+        sessionId = req.cookies.sessionId;
     }
-    const sessionId =req.cookies.sessionId;
 
+    // If no sessionId is found, redirect or close the WebSocket
+    if (!sessionId) {
+        return res.redirect('/auth'); // HTTP request
+    }
+
+    // Check session in the database
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
-        if (err) {
-            console.error('❌ Database Error:', err.message);
-            window.location.href = '/auth';
-            return
+        if (err || !session) {
+            console.error('❌ Invalid session:', err ? err.message : 'Session not found');
+            return res.redirect('/auth'); // HTTP request
         }
-
-        if (!session) {
-            window.location.href = '/auth';
-            return
-        }
-
-        req.username = session.username;
+        res.cookie('sessionUsername', session.username, { httpOnly: false });
     });
 }
 
@@ -54,6 +54,7 @@ const db = new sqlite3.Database('database.db', (err) => {
 
 // deliver html for index page
 app.get('/', async (req, res) => {
+    checkSession(req, res);
     res.send( await readFile('./src/chat.html','utf8'));
 });
 
@@ -153,9 +154,16 @@ app.post('/auth', (req, res) => {
 
 // WebSocket connection
 wss.on('connection', (ws, req) => {
-    //check if user has a valid session
-    checkSession(req);
-    const sessionId = req.username
+    
+    //get username from cookie
+    let username = null;
+    if (req.headers.cookie) {
+        const cookies = req.headers.cookie.split('; ');
+        const usernameCookie = cookies.find(c => c.startsWith('sessionUsername='));
+        if (usernameCookie) {
+            username = decodeURIComponent(usernameCookie.split('=')[1]);
+        }
+    }
 
     //check if session is valid
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
