@@ -20,24 +20,26 @@ app.use(express.json());
 //readfiles easier instead of writing fs.promises.readFile(...)
 const { readFile } = require('fs').promises;
 
-function checkSession(req, res, next) {
+function checkSession(req, res) {
     const sessionId = req.cookies.sessionId;
     if (!sessionId) {
+        window.location.href = '/auth';
         return res.status(401).json({ success: false, message: 'Unauthorized', type: 'session' });
     }
 
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
         if (err) {
             console.error('❌ Database Error:', err.message);
+            window.location.href = '/auth';
             return res.status(500).json({ success: false, message: 'Database error', type: 'session', error: err.message });
         }
 
         if (!session) {
+            window.location.href = '/auth';
             return res.status(401).json({ success: false, message: 'Invalid session', type: 'session' });
         }
 
         req.username = session.username;
-        next();
     });
 }
 
@@ -152,11 +154,7 @@ app.post('/auth', (req, res) => {
 // WebSocket connection
 wss.on('connection', (ws, req) => {
     //check if user has a valid session
-    if(!req.headers.cookie) {
-        console.error('❌ Invalid session');
-        ws.close();
-        return;
-    }
+    checkSession(req, res, next);
 
     const cookies = req.headers.cookie.split(';').reduce((acc, cookie) => {
         const [key, value] = cookie.trim().split('=');
