@@ -21,11 +21,11 @@ app.use(express.json());
 const { readFile } = require('fs').promises;
 
 function checkSession(req) {
-    const sessionId = req.cookies.sessionId;
-    if (!sessionId) {
+    if (!req.cookies.sessionId) {
         window.location.href = '/auth';
         return
     }
+    const sessionId =req.cookies.sessionId;
 
     db.get('SELECT * FROM sessions WHERE id = ?', [sessionId], (err, session) => {
         if (err) {
