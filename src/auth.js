@@ -12,6 +12,6 @@ async function handleAuth() {
     document.getElementById('message').innerText = result.message;
     
     if (result.success) {
-        window.location.href = '/chat';
+        window.location.href = '/';
     }
 }
