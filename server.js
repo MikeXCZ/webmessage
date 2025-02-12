@@ -183,24 +183,24 @@ wss.on('connection', (ws, req) => {
     // Handle incoming messages
     ws.on('message', (data) => {
         parsedData = JSON.parse(data);
-        const { data: content } = parsedData;
-
+        const { data: content} = parsedData;
+        const unixTimestamp = Math.floor(Date.now() / 1000);
         // Store the message
-        db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username], (err) => {
+        db.run('INSERT INTO chat (content, username) VALUES (?, ?)', [content, username, unixTimestamp], (err) => {
             if (err) {
                 console.error('❌ failed to upload message:', err.message);
-            } else {
-                // Broadcast the message to all clients
-                wss.clients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({ 
-                            success: true,
-                            message: "successfully uploaded message",
-                            type: 'message', 
-                            data: { content, username } 
-                        }));
-                    }
-                });
+            }
+        });
+        db.run('SELECT * FR')
+        // Broadcast the message to all clients
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ 
+                    success: true,
+                    message: "successfully uploaded message",
+                    type: 'message', 
+                    data: { content, username, unixTimestamp} 
+                }));
             }
         });
     });
