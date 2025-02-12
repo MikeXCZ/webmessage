@@ -12,7 +12,7 @@ ws.onmessage = function(event) {
     }
 };
 
-document.getElementById('send-button').addEventListener('click', function() {
+document.getElementById('chat-send').addEventListener('click', function() {
     const messageInput = document.getElementById('message-input');
     const message = messageInput.value.trim();
     if (message) {

@@ -15,3 +15,5 @@ async function handleAuth() {
         window.location.href = '/';
     }
 }
+
+document.getElementById('auth-send').addEventListener('click', handleAuth);
