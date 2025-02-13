@@ -1,4 +1,5 @@
 const ws = new WebSocket('ws://192.168.1.198:4000/'); 
+let dateState = false;
 
 ws.onmessage = function(event) {
     const message = JSON.parse(event.data);
@@ -28,6 +29,15 @@ document.getElementById('message-input').addEventListener('keypress', function(e
     }
 });
 
+document.getElementById('date-button').addEventListener('click', ()=>{
+    const image = document.getElementById('expand-img');
+    image.style.transform = dateState ? 'rotateX(0deg)' : 'rotateX(180deg)';
+    Array.from(document.getElementsByClassName('date')).forEach((element)=>{
+        element.style.display = dateState ? 'none' : 'flex';
+    });
+    dateState = !dateState;
+});
+
 function addMessageToChatBox(username,message,date) {
     const chatBox = document.getElementById('message-box');
     const messageElement = document.createElement('div');
@@ -35,12 +45,12 @@ function addMessageToChatBox(username,message,date) {
     const dateElement = document.createElement('div');
     chatElement.classList.add('chat');
     dateElement.classList.add('date');
-    messageElement.classList.add('message');
+    messageElement.classList.add('chat-date-box');
     chatElement.innerHTML = `<strong>${username} </strong> ${message}`;
     date = formatUnixTimestamp(date);
     dateElement.innerHTML = `${date.year}-${date.month}-${date.day} ${date.hour}:${date.minute}:${date.second}`;
-    messageElement.appendChild(chatElement);
     messageElement.appendChild(dateElement);
+    messageElement.appendChild(chatElement);
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
